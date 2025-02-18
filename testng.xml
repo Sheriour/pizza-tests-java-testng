@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Pizza Tests Main Suite">
+    <test name="Pizza Tests">
+        <classes>
+            <class name="tests.PizzaPageTests"/>
+        </classes>
+    </test>
+</suite>
