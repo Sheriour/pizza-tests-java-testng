@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.openqa.selenium.support.PageFactory.initElements;
-
 @Slf4j
 public class PageRepository {
 
@@ -46,7 +44,6 @@ public class PageRepository {
             if (pageOptional.isEmpty()) {
                 //If no page object exists yet, create and return it
                 T page = pageClass.getConstructor().newInstance();
-                initElements(DriverCoordinator.getWebDriver(), page);
                 pages.add(page);
                 return page;
             }
