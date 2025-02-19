@@ -66,10 +66,10 @@ public class DriverCoordinator
     /**
      * Constructs a default 10-second webdriver explicit wait
      *
-     * @return A 10-decond webdriver explicit wait
+     * @return A 2-decond webdriver explicit wait
      */
     public static WebDriverWait getWait(){
-        return new WebDriverWait(getWebDriver(), Duration.ofSeconds(10));
+        return new WebDriverWait(getWebDriver(), Duration.ofSeconds(2));
     }
 
 

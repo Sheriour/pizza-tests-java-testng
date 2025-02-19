@@ -6,9 +6,10 @@ import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 import pages.LandingPage;
+import pages.PizzaArchivePage;
 import pages.PizzaGeneratorPage;
 import system.DriverCoordinator;
-import system.PageRepository;
+import static system.PageRepository.*;
 
 import static utils.Enums.PizzaAppTab.*;
 import static system.DriverCoordinator.*;
@@ -17,19 +18,21 @@ public class PizzaPageTests
 {
     @BeforeMethod
     public void setUp() {
-        PageRepository.getPage(LandingPage.class).launchPizzaPage();
+        getPage(LandingPage.class).launchPizzaPage();
     }
 
     @Test
     public void myTest()
     {
-        LandingPage landingPage = PageRepository.getPage(LandingPage.class);
-        PizzaGeneratorPage generatorPage = PageRepository.getPage(PizzaGeneratorPage.class);
+        LandingPage landingPage = getLandingPage();
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+        PizzaArchivePage archivePage = getPizzaArchivePage();
 
         landingPage.clickAppTab(PIZZA_GENERATOR);
         generatorPage.clickGenerateAndArchive();
-        Assert.assertTrue(generatorPage.isToastVisibleWithMessage("Created one Pizza."));
+        Assert.assertEquals(generatorPage.getToastMessage(), "Generated one pizza.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
+        Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 1);
     }
 
     @AfterMethod
@@ -45,6 +48,6 @@ public class PizzaPageTests
             }
             DriverCoordinator.quitWebDriver();
         }
-        PageRepository.deleteAllPages();
+        deleteAllPages();
     }
 }

@@ -1,6 +1,9 @@
 package system;
 
 import lombok.extern.slf4j.Slf4j;
+import pages.LandingPage;
+import pages.PizzaArchivePage;
+import pages.PizzaGeneratorPage;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -22,6 +25,14 @@ public class PageRepository {
             pagesThread.set(pages);
         }
         return pages;
+    }
+
+    /**
+     * Removes all page references
+     */
+    public static void deleteAllPages(){
+        pagesThread.remove();
+        pagesThread.set(new ArrayList<>());
     }
 
     /**
@@ -60,11 +71,15 @@ public class PageRepository {
         }
     }
 
-    /**
-     * Removes all page references
-     */
-    public static void deleteAllPages(){
-        pagesThread.remove();
-        pagesThread.set(new ArrayList<>());
+    public static LandingPage getLandingPage(){
+        return getPage(LandingPage.class);
+    }
+
+    public static PizzaArchivePage getPizzaArchivePage(){
+        return getPage(PizzaArchivePage.class);
+    }
+
+    public static PizzaGeneratorPage getPizzaGeneratorPage(){
+        return getPage(PizzaGeneratorPage.class);
     }
 }

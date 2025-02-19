@@ -1,7 +1,6 @@
 package pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import utils.Enums.PizzaAppTab;
 
 import static system.DriverCoordinator.getWait;
@@ -10,9 +9,9 @@ import static utils.WebElementUtils.*;
 
 public class LandingPage
 {
-    By pizzaGeneratorButton = By.xpath("//button[text()='Pizza Generator']");
-    By newPizzaButton = By.xpath("//button[text()='New Pizza']");
-    By pizzaArchiveButton = By.xpath("//button[text()='Pizza Archive']");
+    By pizzaGeneratorButtonBy = By.xpath("//button[text()='Pizza Generator']");
+    By newPizzaButtonBy = By.xpath("//button[text()='New Pizza']");
+    By pizzaArchiveButtonBy = By.xpath("//button[text()='Pizza Archive']");
 
     public void launchPizzaPage(){
         //TODO: Put the URL in a config file?
@@ -27,9 +26,9 @@ public class LandingPage
      */
     public void clickAppTab(PizzaAppTab tab){
         switch (tab){
-            case NEW_PIZZA -> waitAndClick(newPizzaButton);
-            case PIZZA_ARCHIVE -> waitAndClick(pizzaArchiveButton);
-            case PIZZA_GENERATOR -> waitAndClick(pizzaGeneratorButton);
+            case NEW_PIZZA -> waitAndClick(newPizzaButtonBy);
+            case PIZZA_ARCHIVE -> waitAndClick(pizzaArchiveButtonBy);
+            case PIZZA_GENERATOR -> waitAndClick(pizzaGeneratorButtonBy);
         }
     }
 }
