@@ -11,11 +11,11 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-    <!-- <aspectj.version>1.9.20.1</aspectj.version>
-     <allure.version>2.24.0</allure.version>-->
+    <aspectj.version>1.9.20.1</aspectj.version>
+     <allure.version>2.24.0</allure.version>
  </properties>
 
- <!--<dependencyManagement>
+ <dependencyManagement>
      <dependencies>
          <dependency>
              <groupId>io.qameta.allure</groupId>
@@ -40,6 +40,9 @@
                  <argLine>
                      -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                  </argLine>
+                 <suiteXmlFiles>
+                     testng.xml
+                 </suiteXmlFiles>
              </configuration>
              <dependencies>
                  <dependency>
@@ -55,9 +58,9 @@
              <version>2.15.2</version>
          </plugin>
      </plugins>
- </build>-->
+ </build>
 
-    <build>
+    <!--<build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -70,7 +73,7 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
     <dependencies>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
@@ -94,29 +97,30 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>3.5.2</version>
         </dependency>
-        <!-- <dependency>
+         <dependency>
              <groupId>io.qameta.allure</groupId>
              <artifactId>allure-testng</artifactId>
              <version>2.24.0</version>
              <scope>test</scope>
-         </dependency> -->
+         </dependency>
 
 
-         <dependency>
+
+         <!--<dependency>
              <groupId>com.aventstack</groupId>
              <artifactId>extentreports</artifactId>
              <version>5.1.2</version>
-         </dependency>
+         </dependency>-->
      </dependencies>
 
-     <!--<reporting>
-         <excludeDefaults>true</excludeDefaults>
-         <plugins>
-             <plugin>
-                 <groupId>io.qameta.allure</groupId>
-                 <artifactId>allure-maven</artifactId>
-                 <version>2.15.2</version>
-             </plugin>
-         </plugins>
-     </reporting>-->
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.15.2</version>
+            </plugin>
+        </plugins>
+    </reporting>
  </project>
