@@ -1,29 +1,33 @@
 package tests;
 
 import org.testng.Assert;
-import org.testng.ITestResult;
 import org.testng.annotations.*;
 import pages.LandingPage;
 import pages.PizzaArchivePage;
 import pages.PizzaGeneratorPage;
-import system.DriverCoordinator;
-import utils.FileUtils;
-
-import java.lang.reflect.Method;
 
 import static system.PageRepository.*;
-
 import static utils.Enums.PizzaAppTab.*;
 
-public class PizzaPageTests
+public class PizzaPageTests extends BaseTest
 {
-    @BeforeMethod
-    public void setUpTest(Method method) {
-        getPage(LandingPage.class).launchPizzaPage();
+    @Test
+    public void cannotPopulateZeroOrElevenPizzas()
+    {
+        LandingPage landingPage = getLandingPage();
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+
+        landingPage.clickAppTab(PIZZA_GENERATOR);
+
+        generatorPage.fillPizzaCount(0);
+        Assert.assertEquals(generatorPage.getPizzaCount(), 1);
+
+        generatorPage.fillPizzaCount(11);
+        Assert.assertEquals(generatorPage.getPizzaCount(), 10);
     }
 
     @Test
-    public void generateOnePizza()
+    public void canGenerateOnePizza()
     {
         LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
@@ -33,27 +37,21 @@ public class PizzaPageTests
         generatorPage.clickGenerateAndArchive();
         Assert.assertEquals(generatorPage.getToastMessage(), "Generated one pizza.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
-        Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 2);
+        Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 1);
     }
 
     @Test
-    public void generateOnePizzaAgain()
+    public void canGenerateTenPizzas()
     {
         LandingPage landingPage = getLandingPage();
-    }
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+        PizzaArchivePage archivePage = getPizzaArchivePage();
 
-    @AfterMethod
-    public void teardown(ITestResult result){
-        if (DriverCoordinator.hasDriver()) {
-            DriverCoordinator.quitWebDriver();
-        }
-        deleteAllPages();
-    }
-
-    @AfterMethod
-    public void screenshotCapture(ITestResult result){
-        if (!result.isSuccess()) {
-            FileUtils.attachAllureScreenshot(DriverCoordinator.getWebDriver());
-        }
+        landingPage.clickAppTab(PIZZA_GENERATOR);
+        generatorPage.fillPizzaCount(10);
+        generatorPage.clickGenerateAndArchive();
+        Assert.assertEquals(generatorPage.getToastMessage(), "Generated 10 pizzas.");
+        landingPage.clickAppTab(PIZZA_ARCHIVE);
+        Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 10);
     }
 }

@@ -67,13 +67,13 @@ public class WebElementUtils {
     /**
      * Waits using default wait and clicks the element when it's available
      *
-     * @param element       WebElement to have text filled out
+     * @param elementBy     By of the element to be clicked
      * @param text          Text to input in the field
      * @param failMessage   Message to output in case of failure
      */
-    public static void waitAndFillField(WebElement element, String text, String failMessage){
+    public static void waitAndFillField(By elementBy, String text, String failMessage){
         try {
-            getWait().until(ExpectedConditions.visibilityOf(element));
+            WebElement element = getWait().until(ExpectedConditions.visibilityOfElementLocated(elementBy));
             element.clear();
             element.sendKeys(text);
         }
