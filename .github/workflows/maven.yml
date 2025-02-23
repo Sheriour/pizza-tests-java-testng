@@ -76,7 +76,7 @@ jobs:
        format: 'YYYY-MM-DD-HH:mm:ss'
     - name: upload
       if: ${{ always() }}
-      run: AWS_ACCESS_KEY_ID=${{secrets.aws_key_id}} AWS_SECRET_ACCESS_KEY=${{secrets.aws_secret_key}} aws s3 cp ./allure-maven-plugin s3://cucumber-selenium-reports/report-${{ steps.time.outputs.time }}
+      run: AWS_ACCESS_KEY_ID=${{secrets.aws_key_id}} AWS_SECRET_ACCESS_KEY=${{secrets.aws_secret_key}} aws s3 cp --recursive ./allure-maven-plugin s3://cucumber-selenium-reports/report-${{ steps.time.outputs.time }}
       working-directory: target/site
       env:
        AWS_DEFAULT_REGION: eu-north-1
