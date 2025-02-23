@@ -1,0 +1,83 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+ schedule:
+    - cron: "0 4 * * *"
+    #branches: [ "main" ]
+
+jobs:
+  run-tests:
+
+    runs-on: ubuntu-latest
+
+    services:
+      hub:
+        image: selenium/hub:latest
+        ports:
+          - 4442-4444:4442-4444
+        env:
+         GRID_BROWSER_TIMEOUT: 300
+         GRID_TIMEOUT: 300
+      chrome:
+        image: selenium/node-chrome:latest
+        ports:
+          - 5555:5555
+        env:
+          HUB_HOST: hub
+          SE_EVENT_BUS_HOST: hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+          SE_NODE_MAX_SESSIONS: 1
+      chrome2:
+        image: selenium/node-chrome:latest
+        ports:
+          - 5556:5556
+        env:
+          HUB_HOST: hub
+          SE_EVENT_BUS_HOST: hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+          SE_NODE_MAX_SESSIONS: 1
+      chrome3:
+        image: selenium/node-chrome:latest
+        ports:
+          - 5557:5557
+        env:
+          HUB_HOST: hub
+          SE_EVENT_BUS_HOST: hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+          SE_NODE_MAX_SESSIONS: 1
+        
+    steps:
+    - uses: actions/checkout@v3
+    #- uses: browser-actions/setup-chrome@v1
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn test
+    - name: Get Time
+      if: ${{ always() }}
+      id: time
+      uses: nanzm/get-time-action@master
+      with:
+       timeZone: UTC
+       format: 'YYYY-MM-DD-HH:mm:ss'
+    - name: upload
+      if: ${{ always() }}
+      run: AWS_ACCESS_KEY_ID=${{secrets.aws_key_id}} AWS_SECRET_ACCESS_KEY=${{secrets.aws_secret_key}} aws s3 cp ./cucumber.html s3://cucumber-selenium-reports/report-${{ steps.time.outputs.time }}.html
+      working-directory: target/reports
+      env:
+       AWS_DEFAULT_REGION: eu-north-1
