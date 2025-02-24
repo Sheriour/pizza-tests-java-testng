@@ -1,5 +1,9 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Pizza Tests Main Suite" parallel="methods" thread-count="2">
+<suite name="Pizza Tests Main Suite">
+    <listeners>
+        <listener class-name="listeners.ThreadCountListener"/>
+    </listeners>
+
     <test name="Pizza Tests">
         <classes>
             <class name="tests.PizzaPageTests"/>

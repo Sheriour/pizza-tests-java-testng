@@ -39,7 +39,7 @@ public class DriverCoordinator
             options.addArguments("--disable-dev-shm-usage");
 
 
-            String runmode = PropertyManager.GetInstance().getProperty("runmode");
+            String runmode = PropertyManager.GetInstance().getPropertyString("runmode");
             try {
                 if (runmode.equalsIgnoreCase("local")){
                     driver = new ChromeDriver(options);
