@@ -13,6 +13,5 @@ public class ThreadCountListener implements ISuiteListener {
         xmlSuite.setThreadCount(threadCount);
         if (threadCount > 1)
             xmlSuite.setParallel(XmlSuite.ParallelMode.METHODS);
-        System.out.print("you doing anytyhing, bro?");
     }
 }

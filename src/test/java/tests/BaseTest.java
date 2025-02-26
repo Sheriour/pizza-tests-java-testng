@@ -13,12 +13,12 @@ import static system.PageRepository.*;
 
 public class BaseTest
 {
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setUpTest(Method method) {
         getPage(LandingPage.class).launchPizzaPage();
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void teardown(ITestResult result){
         if (DriverCoordinator.hasDriver()) {
             DriverCoordinator.quitWebDriver();
@@ -26,7 +26,7 @@ public class BaseTest
         deleteAllPages();
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void screenshotCapture(ITestResult result){
         if (!result.isSuccess()) {
             FileUtils.attachAllureScreenshot(DriverCoordinator.getWebDriver());

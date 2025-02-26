@@ -26,7 +26,7 @@ public class PizzaPageTests extends BaseTest
         Assert.assertEquals(generatorPage.getPizzaCount(), 10);
     }
 
-    @Test
+    @Test(groups = { "sanity" })
     public void canGenerateOnePizza()
     {
         LandingPage landingPage = getLandingPage();
