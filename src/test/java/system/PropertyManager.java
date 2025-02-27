@@ -51,4 +51,8 @@ public class PropertyManager {
     public int getPropertyInt(String propertyName){
         return Integer.parseInt(getPropertyString(propertyName));
     }
+
+    public boolean getPropertyBool(String propertyName){
+        return Boolean.parseBoolean(getPropertyString(propertyName));
+    }
 }

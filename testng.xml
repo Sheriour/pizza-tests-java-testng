@@ -2,6 +2,7 @@
 <suite name="Pizza Tests Main Suite">
     <listeners>
         <listener class-name="listeners.ThreadCountListener"/>
+        <listener class-name="listeners.TestRetryListener"/>
     </listeners>
 
     <test name="Pizza Tests">
