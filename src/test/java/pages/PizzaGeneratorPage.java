@@ -4,16 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import utils.Enums;
+
 
 import static system.DriverCoordinator.getWait;
 import static utils.WebElementUtils.*;
+import static utils.LocatorUtils.*;
 
 @Slf4j
 public class PizzaGeneratorPage
 {
-    By generateArchiveButtonBy = By.xpath("//button[text()='Generate & Archive']");
-    By toastBy = By.cssSelector("div[role='alert']");
+    By generateArchiveButtonBy = ByDataTestId("generate-archive-button");
+    By toastBy = By.id("success-toast");
     By pizzaCountBy = By.id("pizzaCountInput");
+    By pizzaDietDropdownBy = By.id("pizza-filter-diet");
 
     /**
      * Populates the pizza count input to define how many pizzas will be generated
@@ -26,6 +31,25 @@ public class PizzaGeneratorPage
                 String.valueOf(count),
                 "Could not populate pizza count in Generator."
         );
+    }
+
+    /**
+     * Selects the diet type of pizzas to be generated
+     *
+     * @param dietType  Type of diet as enum
+     * @return          Text of the actually chosen option
+     */
+    public String selectPizzaDiet(Enums.DietType dietType){
+        try {
+            WebElement pizzaDietDropdown = getWait().until(ExpectedConditions.elementToBeClickable(pizzaDietDropdownBy));
+            Select dietSelect = new Select(pizzaDietDropdown);
+            dietSelect.selectByVisibleText(dietType.getValue());
+            return dietSelect.getFirstSelectedOption().getText();
+        }
+        catch (Exception e) {
+            log.error("Could not select a pizza diet " + dietType.getValue());
+            throw e;
+        }
     }
 
     /**

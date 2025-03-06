@@ -7,7 +7,7 @@
 
     <test name="Pizza Tests">
         <classes>
-            <class name="tests.PizzaPageTests"/>
+            <class name="tests.PizzaGeneratorTests"/>
         </classes>
     </test>
 </suite>

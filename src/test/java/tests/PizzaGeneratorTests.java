@@ -5,19 +5,22 @@ import org.testng.annotations.*;
 import pages.LandingPage;
 import pages.PizzaArchivePage;
 import pages.PizzaGeneratorPage;
+import utils.Enums;
 
 import static system.PageRepository.*;
 import static utils.Enums.PizzaAppTab.*;
 
-public class PizzaPageTests extends BaseTest
+public class PizzaGeneratorTests extends BaseTest
 {
+    @BeforeMethod
+    public void setUp() {
+        getLandingPage().clickAppTab(PIZZA_GENERATOR);
+    }
+
     @Test
     public void cannotPopulateZeroOrElevenPizzas()
     {
-        LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
-
-        landingPage.clickAppTab(PIZZA_GENERATOR);
 
         generatorPage.fillPizzaCount(0);
         Assert.assertEquals(generatorPage.getPizzaCount(), 1);
@@ -33,7 +36,6 @@ public class PizzaPageTests extends BaseTest
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
         PizzaArchivePage archivePage = getPizzaArchivePage();
 
-        landingPage.clickAppTab(PIZZA_GENERATOR);
         generatorPage.clickGenerateAndArchive();
         Assert.assertEquals(generatorPage.getToastMessage(), "Generated one pizza.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
@@ -53,5 +55,25 @@ public class PizzaPageTests extends BaseTest
         Assert.assertEquals(generatorPage.getToastMessage(), "Generated 10 pizzas.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
         Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 10);
+    }
+
+    @Test
+    public void canGenerateVegetarianPizzas()
+    {
+        LandingPage landingPage = getLandingPage();
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+        PizzaArchivePage archivePage = getPizzaArchivePage();
+
+        landingPage.clickAppTab(PIZZA_GENERATOR);
+        generatorPage.fillPizzaCount(5);
+        Assert.assertEquals(
+                generatorPage.selectPizzaDiet(Enums.DietType.VEGETARIAN),
+                Enums.DietType.VEGETARIAN.getValue()
+        );
+        generatorPage.clickGenerateAndArchive();
+        Assert.assertEquals(generatorPage.getToastMessage(), "Generated 5 pizzas.");
+        landingPage.clickAppTab(PIZZA_ARCHIVE);
+        Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 5);
+
     }
 }
