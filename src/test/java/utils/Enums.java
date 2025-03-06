@@ -9,7 +9,7 @@ public class Enums {
     }
 
     public enum DietType {
-        ANY("Any"),
+        ALL("All"),
         VEGETARIAN("Vegetarian"),
         VEGAN("Vegan");
 

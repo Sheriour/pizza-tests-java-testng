@@ -3,7 +3,6 @@ package pages;
 import org.openqa.selenium.By;
 import utils.Enums.PizzaAppTab;
 
-import static system.DriverCoordinator.getWait;
 import static system.DriverCoordinator.getWebDriver;
 import static utils.WebElementUtils.*;
 

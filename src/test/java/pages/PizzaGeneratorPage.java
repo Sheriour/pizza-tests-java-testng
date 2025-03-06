@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import pages.pagecomponents.PizzaListComponent;
 import utils.Enums;
 
 
@@ -15,10 +16,21 @@ import static utils.LocatorUtils.*;
 @Slf4j
 public class PizzaGeneratorPage
 {
+    PizzaListComponent pizzaListComponent;
+
     By generateArchiveButtonBy = ByDataTestId("generate-archive-button");
+    By generatePreviewButtonBy = ByDataTestId("generate-preview-button");
     By toastBy = By.id("success-toast");
     By pizzaCountBy = By.id("pizzaCountInput");
     By pizzaDietDropdownBy = By.id("pizza-filter-diet");
+
+    public PizzaGeneratorPage(){
+        pizzaListComponent = new PizzaListComponent();
+    }
+
+    public PizzaListComponent getPizzaListComponent() {
+        return pizzaListComponent;
+    }
 
     /**
      * Populates the pizza count input to define how many pizzas will be generated
@@ -73,6 +85,13 @@ public class PizzaGeneratorPage
      */
     public void clickGenerateAndArchive(){
         waitAndClick(generateArchiveButtonBy);
+    }
+
+    /**
+     * Clicks the "Generate & Preview" button which generates pizzas and displays them on Generator page
+     */
+    public void clickGenerateAndPreview(){
+        waitAndClick(generatePreviewButtonBy);
     }
 
     /**

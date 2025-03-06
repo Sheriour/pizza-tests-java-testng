@@ -39,7 +39,7 @@ public class PizzaGeneratorTests extends BaseTest
         generatorPage.clickGenerateAndArchive();
         Assert.assertEquals(generatorPage.getToastMessage(), "Generated one pizza.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
-        Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 1);
+        Assert.assertEquals(archivePage.getPizzaListComponent().getNumberOfPizzaItems(), 1);
     }
 
     @Test
@@ -54,12 +54,20 @@ public class PizzaGeneratorTests extends BaseTest
         generatorPage.clickGenerateAndArchive();
         Assert.assertEquals(generatorPage.getToastMessage(), "Generated 10 pizzas.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
-        Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 10);
+        Assert.assertEquals(archivePage.getPizzaListComponent().getNumberOfPizzaItems(), 10);
     }
 
     @Test
-    public void canGenerateVegetarianPizzas()
-    {
+    public void canGenerateVegetarianPizzas() {
+        canGeneratePizzasOfDiet(Enums.DietType.VEGETARIAN);
+    }
+
+    @Test
+    public void canGenerateVeganPizzas() {
+        canGeneratePizzasOfDiet(Enums.DietType.VEGAN);
+    }
+
+    private void canGeneratePizzasOfDiet(Enums.DietType dietType){
         LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
         PizzaArchivePage archivePage = getPizzaArchivePage();
@@ -67,13 +75,42 @@ public class PizzaGeneratorTests extends BaseTest
         landingPage.clickAppTab(PIZZA_GENERATOR);
         generatorPage.fillPizzaCount(5);
         Assert.assertEquals(
-                generatorPage.selectPizzaDiet(Enums.DietType.VEGETARIAN),
-                Enums.DietType.VEGETARIAN.getValue()
+                generatorPage.selectPizzaDiet( dietType),
+                dietType.getValue()
         );
         generatorPage.clickGenerateAndArchive();
         Assert.assertEquals(generatorPage.getToastMessage(), "Generated 5 pizzas.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
-        Assert.assertEquals(archivePage.getNumberOfPizzaItems(), 5);
+        Assert.assertEquals(archivePage.getPizzaListComponent().getDietCompliantPizzasCount( dietType), 5);
+    }
 
+    @Test
+    public void canGenerateAndPreviewAllPizzas() {
+        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.ALL);
+    }
+
+    @Test
+    public void canGenerateAndPreviewVegetarianPizzas() {
+        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.VEGETARIAN);
+    }
+
+    @Test
+    public void canGenerateAndPreviewVeganPizzas() {
+        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.VEGAN);
+    }
+
+    private void canGenerateAndPreviewPizzasOfDiet(Enums.DietType dietType){
+        LandingPage landingPage = getLandingPage();
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+
+        landingPage.clickAppTab(PIZZA_GENERATOR);
+        generatorPage.fillPizzaCount(5);
+        Assert.assertEquals(
+                generatorPage.selectPizzaDiet( dietType),
+                dietType.getValue()
+        );
+        generatorPage.clickGenerateAndPreview();
+        Assert.assertEquals(generatorPage.getToastMessage(), "Generated 5 pizzas.");
+        Assert.assertEquals(generatorPage.getPizzaListComponent().getDietCompliantPizzasCount( dietType), 5);
     }
 }
