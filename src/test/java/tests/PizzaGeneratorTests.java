@@ -6,6 +6,7 @@ import pages.LandingPage;
 import pages.PizzaArchivePage;
 import pages.PizzaGeneratorPage;
 import utils.Enums;
+import utils.Utils;
 
 import static system.PageRepository.*;
 import static utils.Enums.PizzaAppTab.*;
@@ -86,31 +87,48 @@ public class PizzaGeneratorTests extends BaseTest
 
     @Test
     public void canGenerateAndPreviewAllPizzas() {
-        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.ALL);
+        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.ALL, Utils.getRandomNumberBetween(2,10));
     }
 
     @Test
     public void canGenerateAndPreviewVegetarianPizzas() {
-        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.VEGETARIAN);
+        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.VEGETARIAN, Utils.getRandomNumberBetween(2,10));
     }
 
     @Test
     public void canGenerateAndPreviewVeganPizzas() {
-        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.VEGAN);
+        canGenerateAndPreviewPizzasOfDiet(Enums.DietType.VEGAN, Utils.getRandomNumberBetween(2,10));
     }
 
-    private void canGenerateAndPreviewPizzasOfDiet(Enums.DietType dietType){
+    /**
+     * A common routine for generate & preview tests. It will create a number of pizzas of specified
+     * diet type and verify that they got created, with appropriate toast message and diet type.
+     *
+     * @param dietType      Type of pizza diet to create
+     * @param pizzaCount    How many pizzas to create
+     */
+    private void canGenerateAndPreviewPizzasOfDiet(Enums.DietType dietType, int pizzaCount){
         LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
 
         landingPage.clickAppTab(PIZZA_GENERATOR);
-        generatorPage.fillPizzaCount(5);
+        generatorPage.fillPizzaCount(pizzaCount);
         Assert.assertEquals(
                 generatorPage.selectPizzaDiet( dietType),
                 dietType.getValue()
         );
         generatorPage.clickGenerateAndPreview();
-        Assert.assertEquals(generatorPage.getToastMessage(), "Generated 5 pizzas.");
-        Assert.assertEquals(generatorPage.getPizzaListComponent().getDietCompliantPizzasCount( dietType), 5);
+        Assert.assertEquals(generatorPage.getToastMessage(), "Generated "+pizzaCount+" pizzas.");
+        Assert.assertEquals(generatorPage.getPizzaListComponent().getDietCompliantPizzasCount( dietType), pizzaCount);
+    }
+
+    @Test
+    public void canRemovePizzaFromPreview() {
+        LandingPage landingPage = getLandingPage();
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+
+        landingPage.clickAppTab(PIZZA_GENERATOR);
+        generatorPage.fillPizzaCount(Utils.getRandomNumberBetween(2,10));
+        generatorPage.clickGenerateAndPreview();
     }
 }
