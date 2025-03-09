@@ -123,12 +123,25 @@ public class PizzaGeneratorTests extends BaseTest
     }
 
     @Test
-    public void canRemovePizzaFromPreview() {
+    public void canRemovePizzaFromGeneratorPreview() {
         LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
 
+        int pizzasToGenerate = Utils.getRandomNumberBetween(2, 10);
+
         landingPage.clickAppTab(PIZZA_GENERATOR);
-        generatorPage.fillPizzaCount(Utils.getRandomNumberBetween(2,10));
+        generatorPage.fillPizzaCount(pizzasToGenerate);
         generatorPage.clickGenerateAndPreview();
+
+        //Let's make sure that the app generated sufficient number of pizzas
+        int generatedPizzasCount = generatorPage.getPizzaListComponent().getNumberOfPizzaItems();
+        Assert.assertEquals(generatedPizzasCount, pizzasToGenerate);
+
+        //We will pick a random pizza off the list for deletion
+        int indexOfDeletedPizza = Utils.getRandomNumberBetween(1, pizzasToGenerate);
+        //We can later assert that this name vanishes from the list upon pizza deletion
+        String nameOfDeletedPizza = generatorPage.getPizzaListComponent().getNameOfPizzaAt(indexOfDeletedPizza);
+
+
     }
 }
