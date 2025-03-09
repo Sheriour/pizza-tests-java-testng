@@ -82,4 +82,34 @@ public class WebElementUtils {
             throw e;
         }
     }
+
+    /**
+     * Waits using default wait until element vanishes
+     *
+     * @param elementBy By of the element expected to vanish
+     * @return          True if the element vanished, false otherwise
+     */
+    public static boolean waitForElementToVanish(By elementBy){
+        try {
+            getWait().until(ExpectedConditions.invisibilityOfElementLocated(elementBy));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Waits using default wait until element appears
+     *
+     * @param elementBy By of the element expected to appear
+     * @return          True if the element appeared, false otherwise
+     */
+    public static boolean waitForElementToAppear(By elementBy){
+        try {
+            getWait().until(ExpectedConditions.visibilityOfElementLocated(elementBy));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

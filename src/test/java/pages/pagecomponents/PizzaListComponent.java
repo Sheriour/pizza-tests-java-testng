@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import static system.DriverCoordinator.getWait;
 import static utils.LocatorUtils.ByDataTestId;
+import static utils.WebElementUtils.waitForElementToVanish;
 
 @Slf4j
 public class PizzaListComponent {
@@ -18,8 +19,11 @@ public class PizzaListComponent {
     By listedPizzaItemBy = ByDataTestId("pizza-list-item");
     By dietBadgeBy = ByDataTestId("veg-badge");
     By deletePizzaButtonBy = ByDataTestId("delete-pizza-button");
-    //todo: when data test id for name deploys, this should be: [data-test-id='pizza-name']
-    By pizzaNamesBy = By.cssSelector("[data-test-id='pizza-list-item'] h5");
+    By pizzaNamesBy = By.cssSelector("[data-test-id='pizza-name']");
+
+    private By getPizzaNameBy(String pizzaName){
+        return By.xpath("//*[@data-test-id='pizza-name' and text()='"+pizzaName+"']");
+    }
 
     /**
      * Gets the total number of pizza items on the list
@@ -96,6 +100,21 @@ public class PizzaListComponent {
         }
     }
 
+    /**
+     * Waits until given pizza name vanishes from the list
+     *
+     * @param pizzaName Name of the pizza name expected to vanish
+     * @return          True if the pizza name vanished, false otherwise
+     */
+    public boolean pizzaNameVanishedFromList(String pizzaName){
+        return waitForElementToVanish(getPizzaNameBy(pizzaName));
+    }
+
+    /**
+     * Click the delete button for a pizza at a given position on the list
+     *
+     * @param index Position of the pizza on the list
+     */
     public void deleteNthPizzaOnList(int index){
         try {
             List<WebElement> pizzaDeleteElements =

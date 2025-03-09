@@ -5,6 +5,7 @@ import org.testng.annotations.*;
 import pages.LandingPage;
 import pages.PizzaArchivePage;
 import pages.PizzaGeneratorPage;
+import pages.pagecomponents.PizzaListComponent;
 import utils.Enums;
 import utils.Utils;
 
@@ -123,25 +124,49 @@ public class PizzaGeneratorTests extends BaseTest
     }
 
     @Test
-    public void canRemovePizzaFromGeneratorPreview() {
+    public void canSeePreviewEmptyTextDisplayAndVanish() {
         LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
 
-        int pizzasToGenerate = Utils.getRandomNumberBetween(2, 10);
+        Assert.assertTrue(
+                generatorPage.isNoPizzasTextPresent(),
+                "The 'No pizzas for preview' text was not initially present on page!"
+        );
+        landingPage.clickAppTab(PIZZA_GENERATOR);
+        generatorPage.fillPizzaCount(1);
+        generatorPage.clickGenerateAndPreview();
+        Assert.assertTrue(
+                generatorPage.hasNoPizzasTextVanished(),
+                "The 'No pizzas for preview' text was visible on page after pizzas were generated!"
+        );
+    }
 
+    @Test
+    public void canRemovePizzaFromGeneratorPreview() {
+        LandingPage landingPage = getLandingPage();
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+        PizzaListComponent listComponent = generatorPage.getPizzaListComponent();
+
+        //Generate a random number of pizzas
+        int pizzasToGenerate = Utils.getRandomNumberBetween(2, 10);
         landingPage.clickAppTab(PIZZA_GENERATOR);
         generatorPage.fillPizzaCount(pizzasToGenerate);
         generatorPage.clickGenerateAndPreview();
 
         //Let's make sure that the app generated sufficient number of pizzas
-        int generatedPizzasCount = generatorPage.getPizzaListComponent().getNumberOfPizzaItems();
+        int generatedPizzasCount = listComponent.getNumberOfPizzaItems();
         Assert.assertEquals(generatedPizzasCount, pizzasToGenerate);
 
         //We will pick a random pizza off the list for deletion
         int indexOfDeletedPizza = Utils.getRandomNumberBetween(1, pizzasToGenerate);
-        //We can later assert that this name vanishes from the list upon pizza deletion
-        String nameOfDeletedPizza = generatorPage.getPizzaListComponent().getNameOfPizzaAt(indexOfDeletedPizza);
+        //Keep track of which pizza name is about to be deleted
+        String nameOfDeletedPizza = listComponent.getNameOfPizzaAt(indexOfDeletedPizza);
+        listComponent.deleteNthPizzaOnList(indexOfDeletedPizza);
+        //Verify that pizza with this name is no longer present on the list
+        listComponent.pizzaNameVanishedFromList(nameOfDeletedPizza);
 
-
+        //Verify that the number of pizzas is now 1 fewer than originally generated
+        int pizzaCountAfterDeletion = listComponent.getNumberOfPizzaItems();
+        Assert.assertEquals(pizzaCountAfterDeletion, pizzasToGenerate - 1);
     }
 }

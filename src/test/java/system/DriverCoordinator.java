@@ -64,7 +64,7 @@ public class DriverCoordinator
     }
 
     /**
-     * Constructs a default 10-second webdriver explicit wait
+     * Constructs a default 2-second webdriver explicit wait
      *
      * @return A 2-decond webdriver explicit wait
      */

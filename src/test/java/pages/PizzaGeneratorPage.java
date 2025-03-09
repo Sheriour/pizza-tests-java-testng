@@ -23,6 +23,7 @@ public class PizzaGeneratorPage
     By toastBy = By.id("success-toast");
     By pizzaCountBy = By.id("pizzaCountInput");
     By pizzaDietDropdownBy = By.id("pizza-filter-diet");
+    By noPizzasTextBy = By.xpath("//p[text()='No pizzas generated for preview.']");
 
     public PizzaGeneratorPage(){
         pizzaListComponent = new PizzaListComponent();
@@ -107,5 +108,23 @@ public class PizzaGeneratorPage
             log.error("Could not locate a toast!");
             throw e;
         }
+    }
+
+    /**
+     * Waits for a short time and check is "no pizzas" text is present on page
+     *
+     * @return True if the text appeared, false otherwise
+     */
+    public boolean isNoPizzasTextPresent(){
+        return waitForElementToAppear(noPizzasTextBy);
+    }
+
+    /**
+     * Waits for a short time and check is "no pizzas" text is gone from the page
+     *
+     * @return True if the text vanished, false otherwise
+     */
+    public boolean hasNoPizzasTextVanished(){
+        return waitForElementToVanish(noPizzasTextBy);
     }
 }
