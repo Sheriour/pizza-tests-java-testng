@@ -1,16 +1,19 @@
 package tests;
 
+import com.sun.source.tree.AssertTree;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.LandingPage;
 import pages.PizzaArchivePage;
 import pages.PizzaGeneratorPage;
 import pages.pagecomponents.PizzaListComponent;
+import pages.pagecomponents.ToastComponent;
 import utils.Enums;
 import utils.Utils;
 
 import static system.PageRepository.*;
 import static utils.Enums.PizzaAppTab.*;
+import static utils.Utils.waitForSeconds;
 
 public class PizzaGeneratorTests extends BaseTest
 {
@@ -34,14 +37,10 @@ public class PizzaGeneratorTests extends BaseTest
     @Test(groups = { "sanity" })
     public void canGenerateOnePizza()
     {
-        LandingPage landingPage = getLandingPage();
-        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
-        PizzaArchivePage archivePage = getPizzaArchivePage();
-
-        generatorPage.clickGenerateAndArchive();
-        Assert.assertEquals(generatorPage.getToastMessage(), "Generated one pizza.");
-        landingPage.clickAppTab(PIZZA_ARCHIVE);
-        Assert.assertEquals(archivePage.getPizzaListComponent().getNumberOfPizzaItems(), 1);
+        getPizzaGeneratorPage().clickGenerateAndArchive();
+        Assert.assertEquals(getToastComponent().getToastMessage(), "Generated one pizza.");
+        getLandingPage().clickAppTab(PIZZA_ARCHIVE);
+        Assert.assertEquals(getPizzaListComponent().getNumberOfPizzaItems(), 1);
     }
 
     @Test
@@ -49,14 +48,13 @@ public class PizzaGeneratorTests extends BaseTest
     {
         LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
-        PizzaArchivePage archivePage = getPizzaArchivePage();
 
         landingPage.clickAppTab(PIZZA_GENERATOR);
         generatorPage.fillPizzaCount(10);
         generatorPage.clickGenerateAndArchive();
-        Assert.assertEquals(generatorPage.getToastMessage(), "Generated 10 pizzas.");
+        Assert.assertEquals(getToastComponent().getToastMessage(), "Generated 10 pizzas.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
-        Assert.assertEquals(archivePage.getPizzaListComponent().getNumberOfPizzaItems(), 10);
+        Assert.assertEquals(getPizzaListComponent().getNumberOfPizzaItems(), 10);
     }
 
     @Test
@@ -72,7 +70,7 @@ public class PizzaGeneratorTests extends BaseTest
     private void canGeneratePizzasOfDiet(Enums.DietType dietType){
         LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
-        PizzaArchivePage archivePage = getPizzaArchivePage();
+
 
         landingPage.clickAppTab(PIZZA_GENERATOR);
         generatorPage.fillPizzaCount(5);
@@ -81,9 +79,12 @@ public class PizzaGeneratorTests extends BaseTest
                 dietType.getValue()
         );
         generatorPage.clickGenerateAndArchive();
-        Assert.assertEquals(generatorPage.getToastMessage(), "Generated 5 pizzas.");
+        Assert.assertEquals(getToastComponent().getToastMessage(), "Generated 5 pizzas.");
         landingPage.clickAppTab(PIZZA_ARCHIVE);
-        Assert.assertEquals(archivePage.getPizzaListComponent().getDietCompliantPizzasCount( dietType), 5);
+        Assert.assertEquals(
+                getPizzaListComponent().getDietCompliantPizzasCount( dietType),
+                5
+        );
     }
 
     @Test
@@ -109,30 +110,28 @@ public class PizzaGeneratorTests extends BaseTest
      * @param pizzaCount    How many pizzas to create
      */
     private void canGenerateAndPreviewPizzasOfDiet(Enums.DietType dietType, int pizzaCount){
-        LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
 
-        landingPage.clickAppTab(PIZZA_GENERATOR);
+        getLandingPage().clickAppTab(PIZZA_GENERATOR);
         generatorPage.fillPizzaCount(pizzaCount);
         Assert.assertEquals(
                 generatorPage.selectPizzaDiet( dietType),
                 dietType.getValue()
         );
         generatorPage.clickGenerateAndPreview();
-        Assert.assertEquals(generatorPage.getToastMessage(), "Generated "+pizzaCount+" pizzas.");
-        Assert.assertEquals(generatorPage.getPizzaListComponent().getDietCompliantPizzasCount( dietType), pizzaCount);
+        Assert.assertEquals(getToastComponent().getToastMessage(), "Generated "+pizzaCount+" pizzas.");
+        Assert.assertEquals(getPizzaListComponent().getDietCompliantPizzasCount( dietType), pizzaCount);
     }
 
     @Test
     public void canSeePreviewEmptyTextDisplayAndVanish() {
-        LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
 
         Assert.assertTrue(
                 generatorPage.isNoPizzasTextPresent(),
                 "The 'No pizzas for preview' text was not initially present on page!"
         );
-        landingPage.clickAppTab(PIZZA_GENERATOR);
+        getLandingPage().clickAppTab(PIZZA_GENERATOR);
         generatorPage.fillPizzaCount(1);
         generatorPage.clickGenerateAndPreview();
         Assert.assertTrue(
@@ -143,19 +142,14 @@ public class PizzaGeneratorTests extends BaseTest
 
     @Test
     public void canRemovePizzaFromGeneratorPreview() {
-        LandingPage landingPage = getLandingPage();
         PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
-        PizzaListComponent listComponent = generatorPage.getPizzaListComponent();
+        PizzaListComponent listComponent = getPizzaListComponent();
 
+        getLandingPage().clickAppTab(PIZZA_GENERATOR);
         //Generate a random number of pizzas
         int pizzasToGenerate = Utils.getRandomNumberBetween(2, 10);
-        landingPage.clickAppTab(PIZZA_GENERATOR);
         generatorPage.fillPizzaCount(pizzasToGenerate);
         generatorPage.clickGenerateAndPreview();
-
-        //Let's make sure that the app generated sufficient number of pizzas
-        int generatedPizzasCount = listComponent.getNumberOfPizzaItems();
-        Assert.assertEquals(generatedPizzasCount, pizzasToGenerate);
 
         //We will pick a random pizza off the list for deletion
         int indexOfDeletedPizza = Utils.getRandomNumberBetween(1, pizzasToGenerate);
@@ -163,10 +157,48 @@ public class PizzaGeneratorTests extends BaseTest
         String nameOfDeletedPizza = listComponent.getNameOfPizzaAt(indexOfDeletedPizza);
         listComponent.deleteNthPizzaOnList(indexOfDeletedPizza);
         //Verify that pizza with this name is no longer present on the list
-        listComponent.pizzaNameVanishedFromList(nameOfDeletedPizza);
+        Assert.assertTrue(
+                listComponent.pizzaNameVanishedFromList(nameOfDeletedPizza),
+                "The pizza "+nameOfDeletedPizza+" was still present on the list after deletion!"
+        );
 
         //Verify that the number of pizzas is now 1 fewer than originally generated
         int pizzaCountAfterDeletion = listComponent.getNumberOfPizzaItems();
-        Assert.assertEquals(pizzaCountAfterDeletion, pizzasToGenerate - 1);
+        Assert.assertEquals(
+                pizzaCountAfterDeletion,
+                pizzasToGenerate - 1,
+                "The total number of pizzas did not change after deletion!");
+    }
+
+    @Test
+    public void canAddPizzasFromGeneratorPreviewToArchive() {
+        LandingPage landingPage = getLandingPage();
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+        ToastComponent toastComponent = getToastComponent();
+
+        landingPage.clickAppTab(PIZZA_GENERATOR);
+
+        //Generate a random number of pizzas
+        int pizzasToGenerate = Utils.getRandomNumberBetween(2, 10);
+        generatorPage.fillPizzaCount(pizzasToGenerate);
+        generatorPage.clickGenerateAndPreview();
+        toastComponent.closeToast();
+
+        //A new toast won't be displayed if the actions take place in quick succession
+        waitForSeconds(2);
+
+        //Archive pizzas and assert toast
+        generatorPage.clickArchiveAllButton();
+        Assert.assertEquals(
+                toastComponent.getToastMessage(),
+                "Added "+pizzasToGenerate+" pizzas to Archive."
+        );
+
+        landingPage.clickAppTab(PIZZA_ARCHIVE);
+
+        Assert.assertEquals(
+                getPizzaListComponent().getNumberOfPizzaItems(),
+                pizzasToGenerate,
+                "The number of generated pizzas did not match the number of pizzas in archive!");
     }
 }

@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import pages.LandingPage;
 import pages.PizzaArchivePage;
 import pages.PizzaGeneratorPage;
+import pages.pagecomponents.PizzaListComponent;
+import pages.pagecomponents.ToastComponent;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -64,9 +66,9 @@ public class PageRepository {
             }
         }
         catch (Exception e){
-            System.out.println("Exception encountered when creating a Page Object. If running tests locally without " +
+            log.error("Exception encountered when creating a Page Object. If running tests locally without " +
                     "a running Selenium Grid, switch to runmode=local in jiratest.properties file");
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             throw new AssertionError("Could not create page " + pageClass.getName());
         }
     }
@@ -81,5 +83,13 @@ public class PageRepository {
 
     public static PizzaGeneratorPage getPizzaGeneratorPage(){
         return getPage(PizzaGeneratorPage.class);
+    }
+
+    public static ToastComponent getToastComponent(){
+        return getPage(ToastComponent.class);
+    }
+
+    public static PizzaListComponent getPizzaListComponent(){
+        return getPage(PizzaListComponent.class);
     }
 }

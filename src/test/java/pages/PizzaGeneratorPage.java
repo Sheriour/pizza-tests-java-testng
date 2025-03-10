@@ -16,22 +16,13 @@ import static utils.LocatorUtils.*;
 @Slf4j
 public class PizzaGeneratorPage
 {
-    PizzaListComponent pizzaListComponent;
-
     By generateArchiveButtonBy = ByDataTestId("generate-archive-button");
     By generatePreviewButtonBy = ByDataTestId("generate-preview-button");
-    By toastBy = By.id("success-toast");
+
     By pizzaCountBy = By.id("pizzaCountInput");
     By pizzaDietDropdownBy = By.id("pizza-filter-diet");
     By noPizzasTextBy = By.xpath("//p[text()='No pizzas generated for preview.']");
-
-    public PizzaGeneratorPage(){
-        pizzaListComponent = new PizzaListComponent();
-    }
-
-    public PizzaListComponent getPizzaListComponent() {
-        return pizzaListComponent;
-    }
+    By archiveAllButtonBy = ByDataTestId("archive-all-button");
 
     /**
      * Populates the pizza count input to define how many pizzas will be generated
@@ -96,21 +87,6 @@ public class PizzaGeneratorPage
     }
 
     /**
-     * Get the message present in a displayed toast
-     *
-     * @return  The string representation of the message visible in the toast
-     */
-    public String getToastMessage(){
-        try{
-            WebElement toast = getWait().until(ExpectedConditions.visibilityOfElementLocated(toastBy));
-            return toast.getText();
-        } catch (Exception e) {
-            log.error("Could not locate a toast!");
-            throw e;
-        }
-    }
-
-    /**
      * Waits for a short time and check is "no pizzas" text is present on page
      *
      * @return True if the text appeared, false otherwise
@@ -126,5 +102,12 @@ public class PizzaGeneratorPage
      */
     public boolean hasNoPizzasTextVanished(){
         return waitForElementToVanish(noPizzasTextBy);
+    }
+
+    /**
+     * Clicks the "archive all" button
+     */
+    public void clickArchiveAllButton(){
+        waitAndClick(archiveAllButtonBy);
     }
 }
