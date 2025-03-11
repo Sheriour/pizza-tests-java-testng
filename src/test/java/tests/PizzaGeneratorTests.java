@@ -1,10 +1,8 @@
 package tests;
 
-import com.sun.source.tree.AssertTree;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.LandingPage;
-import pages.PizzaArchivePage;
 import pages.PizzaGeneratorPage;
 import pages.pagecomponents.PizzaListComponent;
 import pages.pagecomponents.ToastComponent;
@@ -199,6 +197,46 @@ public class PizzaGeneratorTests extends BaseTest
         Assert.assertEquals(
                 getPizzaListComponent().getNumberOfPizzaItems(),
                 pizzasToGenerate,
-                "The number of generated pizzas did not match the number of pizzas in archive!");
+                "The number of generated pizzas did not match the number of pizzas in archive!"
+        );
+    }
+
+    @Test
+    public void regeneratingPreviewResetsPizzas() {
+        PizzaGeneratorPage generatorPage = getPizzaGeneratorPage();
+        PizzaListComponent listComponent = getPizzaListComponent();
+
+        getLandingPage().clickAppTab(PIZZA_GENERATOR);
+
+        //Initially let's generate 4 pizzas
+        int initialPizzaCount = 4;
+        generatorPage.fillPizzaCount(initialPizzaCount);
+        generatorPage.clickGenerateAndPreview();
+        String firstNameSet = listComponent.getAllPizzaNamesAsString();
+
+        //Now let's generate 4 pizzas again. These should replace the first set of 4
+        generatorPage.fillPizzaCount(initialPizzaCount);
+        generatorPage.clickGenerateAndPreview();
+        String secondNameSet = listComponent.getAllPizzaNamesAsString();
+
+        //Assert that new set of pizza names is different from the first
+        Assert.assertNotEquals(firstNameSet, secondNameSet);
+        //Assert that there are still 4 pizzas in preview
+        Assert.assertEquals(
+                getPizzaListComponent().getNumberOfPizzaItems(),
+                initialPizzaCount,
+                "The number of generated pizzas did not match the number of requested " + initialPizzaCount
+        );
+
+        //Now let's generate 6 pizzas. These should replace the second set of 4
+        int regeneratedPizzaCount = 6;
+        generatorPage.fillPizzaCount(regeneratedPizzaCount);
+        generatorPage.clickGenerateAndPreview();
+
+        //Assert that there are now 6 pizzas in preview
+        Assert.assertEquals(
+                listComponent.getNumberOfPizzaItems(),
+                regeneratedPizzaCount,
+                "The number of re-generated pizzas did not match the requested " + regeneratedPizzaCount);
     }
 }

@@ -101,6 +101,28 @@ public class PizzaListComponent {
     }
 
     /**
+     * Combines all pizza names on the list into one big string.
+     * This can be used to verify if two sets of pizzas are identical.
+     *
+     * @return All pizza names on the list as one big string
+     */
+    public String getAllPizzaNamesAsString(){
+        StringBuilder combinedName = new StringBuilder();
+        try {
+            List<WebElement> pizzaNameElements =
+                    getWait().until(ExpectedConditions.visibilityOfAllElementsLocatedBy(pizzaNamesBy));
+            for (WebElement pizzaName : pizzaNameElements) {
+                combinedName.append(pizzaName.getText());
+            }
+            return combinedName.toString();
+        }
+        catch (Exception e) {
+            log.error("Encountered an exception when trying to locate a pizza names.");
+            throw e;
+        }
+    }
+
+    /**
      * Waits until given pizza name vanishes from the list
      *
      * @param pizzaName Name of the pizza name expected to vanish
